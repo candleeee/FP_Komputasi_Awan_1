@@ -1,19 +1,19 @@
 pipeline {
     agent any
- stages {
-        stage('Clone Repository') {
+    stages {
+        stage('Build') {
             steps {
-                git ''
+                git  'https://github.com/Faqs1/Kelompok5_Komputasi.git'
             }
         }
-        stage('Install Dependencies') {
+        stage('Test') {
             steps {
-                echo 'Testing...'
+                sh 'ansible-galaxy install -r requirements.yml'
             }
         }
-        stage('Run Ansible Playbook') {
+        stage('Deploy') {
             steps {
-               echo 'Testing...'
+                 ansibleplaybook credentialsId: 'b6dc3518-4b6e-4774-a292-d5aeda03de68', inventory: 'hosts', playbook: 'mariadb.yml'
             }
         }
     }
@@ -23,7 +23,6 @@ pipeline {
         }
         failure {
             echo 'Deployment failed!'
-    }
-    }
-
+        }
+    }
 }
