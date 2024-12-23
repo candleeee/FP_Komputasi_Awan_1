@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git  'https://github.com/Faqs1/Kelompok5_Komputasi.git'
+                git 'https://github.com/Faqs1/Kelompok5_Komputasi.git'
             }
         }
         stage('Test') {
@@ -13,7 +13,9 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                 ansibleplaybook credentialsId: 'b6dc3518-4b6e-4774-a292-d5aeda03de68', inventory: 'hosts', playbook: 'mariadb.yml'
+                withCredentials([sshUserPrivateKey(credentialsId: 'b6dc3518-4b6e-4774-a292-d5aeda03de68', keyFileVariable: 'KEY')]) {
+                    sh 'ansible-playbook -i hosts -u user --private-key $KEY mariadb.yml'
+                }
             }
         }
     }
@@ -23,6 +25,6 @@ pipeline {
         }
         failure {
             echo 'Deployment failed!'
-        }
-    }
+        }
+    }
 }
